@@ -1,28 +1,7 @@
 {
   "name": "Stripes Mod Store",
-  "updated": "2026-11-01T21:42:59Z",
+  "updated": "2026-11-01T21:43:06Z",
   "mods": [
-    {
-      "id": "reward-shower",
-      "name": "Reward Shower",
-      "creator": "5T4RL16HT",
-      "version": "2",
-      "summary": "Driftium Shower",
-      "description": "Driftium Shower",
-      "tags": [
-        "effects",
-        "rewards"
-      ],
-      "updated": "2026-10-30T23:35:08Z",
-      "files": [
-        {
-          "name": "reward-shower.zip",
-          "url": "mods/reward-shower/reward-shower.zip",
-          "bytes": 28843,
-          "sha256": "48df850a75db6fa72352a9ecfce2f7aec6b50fd5608cd81ec65f630813f8faab"
-        }
-      ]
-    },
     {
       "id": "Driftrinth-Client",
       "name": "Driftrinth Client",
