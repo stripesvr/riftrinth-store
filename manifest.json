@@ -1,6 +1,6 @@
 {
   "name": "Stripes Mod Store",
-  "updated": "2026-11-01T21:42:41Z",
+  "updated": "2026-11-01T21:42:42Z",
   "mods": [
     {
       "id": "robot-playermodel",
@@ -39,23 +39,23 @@
       ]
     },
     {
-      "id": "skybox-changer",
-      "name": "Skybox Changer",
-      "creator": "MeiMei",
-      "version": "1.0.0",
-      "summary": "Swaps the skybox for the OpenEA one.",
-      "description": "Swaps the skybox for the OpenEA one.",
+      "id": "reward-shower",
+      "name": "Reward Shower",
+      "creator": "5T4RL16HT",
+      "version": "2",
+      "summary": "Driftium Shower",
+      "description": "Driftium Shower",
       "tags": [
-        "skybox",
-        "visuals"
+        "effects",
+        "rewards"
       ],
-      "updated": "2026-10-30T23:34:38Z",
+      "updated": "2026-10-30T23:35:08Z",
       "files": [
         {
-          "name": "skybox-changer.zip",
-          "url": "mods/skybox-changer/skybox-changer.zip",
-          "bytes": 13057,
-          "sha256": "663a9a7cefa2eaa0960199b5cee61c594bf3969d158a253498b9f9df16bd1e46"
+          "name": "reward-shower.zip",
+          "url": "mods/reward-shower/reward-shower.zip",
+          "bytes": 28843,
+          "sha256": "48df850a75db6fa72352a9ecfce2f7aec6b50fd5608cd81ec65f630813f8faab"
         }
       ]
     },
