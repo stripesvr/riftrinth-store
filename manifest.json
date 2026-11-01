@@ -1,6 +1,6 @@
 {
   "name": "Stripes Mod Store",
-  "updated": "2026-11-01T21:38:11Z",
+  "updated": "2026-11-01T21:42:34Z",
   "mods": [
     {
       "id": "robot-playermodel",
@@ -95,26 +95,6 @@
           "url": "mods/Driftrinth-Client/Driftrinth-Client.zip",
           "bytes": 353175,
           "sha256": "142ecd0d6dbcc2ec2303f802c92f573745921009d2aa3fa4ef9c93e73b042fb2"
-        }
-      ]
-    },
-    {
-      "id": "might-be-fixed-meimei-client",
-      "name": "Might be fixed meimei client",
-      "creator": "MeiMei, AGyeep",
-      "version": "1.0.0",
-      "summary": "Fixed?",
-      "description": "Fixed?",
-      "tags": [
-        "mod menu"
-      ],
-      "updated": "2026-11-01T21:38:11Z",
-      "files": [
-        {
-          "name": "might-be-fixed-meimei-client.zip",
-          "url": "mods/might-be-fixed-meimei-client/might-be-fixed-meimei-client.zip",
-          "bytes": 500952,
-          "sha256": "68198a2cf9d5c20a5082673aa92ea463b46f5fb87af488340fa67b3bf155edea"
         }
       ]
     }
