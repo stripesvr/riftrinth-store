@@ -3,6 +3,7 @@
 //   /login        admin: check the password, list store mods and submissions
 //   /upload       admin: release a mod straight to the store
 //   /review       admin: approve (release) or reject a queued submission
+//   /delete       admin: remove a mod and its zip from the store
 //   /download     admin: fetch a queued submission's zip
 // Releases commit the zip and manifest entry to the store branch. The password
 // and GitHub token are Worker secrets, so neither reaches the browser or repo.
@@ -25,7 +26,7 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { headers: cors });
     const path = new URL(request.url).pathname;
-    const routes = ["/submit", "/login", "/upload", "/review", "/download"];
+    const routes = ["/submit", "/login", "/upload", "/review", "/download", "/delete"];
     if (request.method !== "POST" || !routes.includes(path)) return reply(404, { error: "Not found" });
 
     let form;
@@ -44,6 +45,7 @@ export default {
       }
       if (path === "/upload") return reply(200, await release(await zipFrom(form, LIMIT), fieldsFrom(form), env));
       if (path === "/review") return reply(200, await review(form, env));
+      if (path === "/delete") return reply(200, await remove(text(form, "id", 80), env));
       if (path === "/download") {
         const item = (await readQueue(env)).items.find(s => s.id === form.get("id"));
         if (!item) throw fail(404, "That submission is gone.");
@@ -167,6 +169,21 @@ async function release(bytes, f, env) {
   if (oldUrl && oldUrl !== path) tree.push({ path: oldUrl, mode: "100644", type: "blob", sha: null });
   await commit(env, env.BRANCH, tree, `${prev ? "Update" : "Add"} ${f.name} ${f.version}`);
   return { ok: true, updated: !!prev, entry, mods };
+}
+
+async function remove(id, env) {
+  const { manifest } = await readStore(env);
+  const prev = manifest.mods.find(m => m.id === id);
+  if (!prev) throw fail(404, "That mod isn't in the store any more.");
+  const mods = manifest.mods.filter(m => m !== prev);
+  const now = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  const tree = [{ path: "manifest.json", mode: "100644", type: "blob", sha: await blob(env, json({ ...manifest, updated: now, mods })) }];
+  // Delete the zip only if the store hosts it and no other entry still uses it.
+  for (const f of prev.files || [])
+    if (f.url && !/^https?:/i.test(f.url) && !mods.some(m => (m.files || []).some(o => o.url === f.url)) && await gh(env, `/contents/${f.url}?ref=${env.BRANCH}`, { allow404: true }))
+      tree.push({ path: f.url, mode: "100644", type: "blob", sha: null });
+  await commit(env, env.BRANCH, tree, `Remove ${prev.name}`);
+  return { ok: true, mods };
 }
 
 // ---------- Submissions queue ----------

@@ -132,7 +132,10 @@
   ul.mods .mrow { display:flex; justify-content:space-between; align-items:center; gap:12px; }
   ul.mods .btn .chev { width:14px; height:14px; transition:transform .2s ease; }
   ul.mods li.open .btn .chev { transform:rotate(180deg); }
-  ul.mods li.open > .mrow .btn { background:var(--surface-raised); border-color:var(--border-strong); }
+  ul.mods .mbtns { display:flex; gap:8px; flex:none; }
+  ul.mods .btn-del { color:var(--text-muted); }
+  ul.mods .btn-del:hover { color:var(--accent); border-color:rgba(255,77,85,.45); background:rgba(255,77,85,.06); }
+  ul.mods li.open > .mrow .btn-upd { background:var(--surface-raised); border-color:var(--border-strong); }
   .upd { display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s var(--ease, ease); }
   li.open .upd { grid-template-rows:1fr; }
   .upd > div { overflow:hidden; }
@@ -552,18 +555,32 @@ function renderMods() {
   for (const m of list) {
     const li = document.createElement("li");
     li.innerHTML = `<div class="mrow"><div><div class="mname"></div><small></small></div>
-      <button class="btn btn-ghost" type="button" aria-expanded="false">Update <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      <div class="mbtns"><button class="btn btn-ghost btn-del" type="button" aria-label="Delete">Delete</button><button class="btn btn-ghost btn-upd" type="button" aria-expanded="false">Update <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div></div>
       <div class="upd"><div><div class="upd-inner"></div></div></div>`;
     li.querySelector(".mname").textContent = m.name;
     li.querySelector("small").textContent = `v${m.version} by ${m.creator}`;
-    const btn = li.querySelector(".mrow .btn");
+    const btn = li.querySelector(".btn-upd");
+    li.querySelector(".btn-del").onclick = () => removeMod(m, li);
     btn.onclick = () => {
       const open = !li.classList.contains("open");
-      for (const other of ul.querySelectorAll("li.open")) { other.classList.remove("open"); other.querySelector(".mrow .btn").setAttribute("aria-expanded", "false"); }
+      for (const other of ul.querySelectorAll("li.open")) { other.classList.remove("open"); other.querySelector(".btn-upd").setAttribute("aria-expanded", "false"); }
       if (open) { if (!li.querySelector(".upd-inner").childElementCount) buildUpdate(li.querySelector(".upd-inner"), m); li.classList.add("open"); }
       btn.setAttribute("aria-expanded", String(open));
     };
     ul.append(li);
+  }
+}
+
+async function removeMod(m, li) {
+  if (!confirm(`Delete ${m.name} from the store? Players won't be able to download it any more.`)) return;
+  const del = li.querySelector(".btn-del");
+  li.querySelectorAll("button").forEach(b => b.disabled = true); del.textContent = "Deleting...";
+  try {
+    mods = (await api("/delete", { id: m.id })).mods; renderMods();
+    show("storeMsg", `Deleted ${m.name}. It disappears from Driftrinth in a few minutes.`);
+  } catch (e) {
+    li.querySelectorAll("button").forEach(b => b.disabled = false); del.textContent = "Delete";
+    show("storeMsg"); alert(e.message);
   }
 }
 
@@ -622,8 +639,7 @@ function buildUpdate(box, m) {
         file: new File([zip.bytes], "mod.zip", { type: "application/zip" }),
       });
       mods = res.mods; renderMods();
-      $("storeMsg").textContent = `Updated ${m.name} to v${res.entry.version}. It goes live in a few minutes.`;
-      $("storeMsg").hidden = false;
+      show("storeMsg", `Updated ${m.name} to v${res.entry.version}. It goes live in a few minutes.`);
     } catch (e) {
       err(e.message); go.textContent = "Release update"; check();
     }
