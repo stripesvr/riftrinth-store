@@ -1,0 +1,11 @@
+{
+  "name": "Might be fixed meimei client",
+  "creator": "MeiMei, AGyeep",
+  "version": "1.0.0",
+  "tags": "mod menu",
+  "summary": "Fixed?",
+  "about": "",
+  "bytes": 500952,
+  "patches": "A2-Android_ASTC_MeiMeiClient_P.pak, A2-Android_ASTC_MeiMeiClient_P.ucas, A2-Android_ASTC_MeiMeiClient_P.utoc",
+  "submitted": "2026-11-01T15:03:34Z"
+}
