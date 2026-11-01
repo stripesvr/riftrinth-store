@@ -1,0 +1,11 @@
+{
+  "name": "Placeholder Test",
+  "creator": "tyougurt",
+  "version": "1.0.0",
+  "tags": "test",
+  "summary": "placeholder to verify the store pipeline works",
+  "about": "placeholder to verify the store pipeline works",
+  "bytes": 373,
+  "patches": "placeholder.pak, placeholder.ucas, placeholder.utoc",
+  "submitted": "2026-11-01T14:51:59Z"
+}
