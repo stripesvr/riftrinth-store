@@ -1,25 +1,7 @@
 {
   "name": "Stripes Mod Store",
-  "updated": "2026-11-01T21:42:42Z",
+  "updated": "2026-11-01T21:42:48Z",
   "mods": [
-    {
-      "id": "robot-playermodel",
-      "name": "Robot Playermodel",
-      "creator": "MeiMei",
-      "version": "1.0.0",
-      "summary": "By MeiMei",
-      "description": "By MeiMei",
-      "tags": [],
-      "updated": "2026-10-30T23:07:56Z",
-      "files": [
-        {
-          "name": "robot-playermodel.zip",
-          "url": "mods/robot-playermodel/robot-playermodel.zip",
-          "bytes": 508995,
-          "sha256": "91ee32369d36a9b301f579930933901e3d8f3c32e9adc973bc3af391b4e34911"
-        }
-      ]
-    },
     {
       "id": "no-speedcap",
       "name": "No Speedcap",
