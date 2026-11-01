@@ -1,25 +1,7 @@
 {
   "name": "Stripes Mod Store",
-  "updated": "2026-11-01T21:42:48Z",
+  "updated": "2026-11-01T21:42:59Z",
   "mods": [
-    {
-      "id": "no-speedcap",
-      "name": "No Speedcap",
-      "creator": "MeiMei",
-      "version": "1.0.0",
-      "summary": "makes the speed cap infinite, go as fast as you want",
-      "description": "makes the speed cap infinite, go as fast as you want",
-      "tags": [],
-      "updated": "2026-10-30T23:10:35Z",
-      "files": [
-        {
-          "name": "no-speedcap.zip",
-          "url": "mods/no-speedcap/no-speedcap.zip",
-          "bytes": 28692,
-          "sha256": "667cc211df28718d1d2f8387938ca74d592b353550f260474eebd7b12f5c5942"
-        }
-      ]
-    },
     {
       "id": "reward-shower",
       "name": "Reward Shower",
