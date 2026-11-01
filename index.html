@@ -16,7 +16,7 @@
   body { background:var(--bg); color:var(--text); font-family:var(--font-sans); margin:0; }
   .page { padding-top:48px; }
   /* Before unlocking, the page is only the sign-in card. */
-  .gate-only { display:none; }
+  body:not(.gate) .gate-only { display:none !important; }
   body.gate .gate-only { display:block; }
   body.gate .header, body.gate .footer, body.gate .step:not(#step1), body.gate #storeCard, body.gate #step1 .step-head { display:none !important; }
   body.gate .page { justify-content:center; align-items:center; padding-top:24px; padding-bottom:24px; min-height:100vh; min-height:100dvh; }
@@ -95,6 +95,7 @@
   /* Notices */
   .notice { padding:10px 12px; border-radius:var(--radius-sm); font-size:0.875rem; border:1px solid var(--border); background:var(--surface-raised); }
   .notice.err { border-color:rgba(255,77,85,.4); background:rgba(255,77,85,.07); color:#ffb3b6; }
+  .notice.good { border-color:rgba(111,207,143,.4); background:rgba(111,207,143,.07); color:#bfeacd; }
   .notice.info { border-color:rgba(232,178,58,.35); background:rgba(232,178,58,.08); color:#f0d18a; }
 
   /* Preview */
@@ -127,7 +128,18 @@
 
   /* Store list */
   ul.mods { list-style:none; margin:0; padding:0; }
-  ul.mods li { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--border); }
+  ul.mods li { padding:10px 0; border-top:1px solid var(--border); }
+  ul.mods .mrow { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  ul.mods .btn .chev { width:14px; height:14px; transition:transform .2s ease; }
+  ul.mods li.open .btn .chev { transform:rotate(180deg); }
+  ul.mods li.open > .mrow .btn { background:var(--surface-raised); border-color:var(--border-strong); }
+  .upd { display:grid; grid-template-rows:0fr; transition:grid-template-rows .25s var(--ease, ease); }
+  li.open .upd { grid-template-rows:1fr; }
+  .upd > div { overflow:hidden; }
+  .upd-inner { display:flex; flex-direction:column; gap:12px; margin-top:12px; padding:14px; border:1px solid var(--border); border-radius:var(--radius-sm); background:#0c0c0f; }
+  .upd-inner .drop { padding:18px 12px; }
+  .upd-inner input, .upd-inner textarea { background:var(--surface); }
+  .upd-inner textarea { min-height:70px; }
   ul.mods li:first-child { border-top:0; }
   ul.mods .mname { font-weight:600; font-size:0.9375rem; }
   ul.mods small { color:var(--text-muted); font-size:0.8125rem; }
@@ -250,7 +262,8 @@
     </section>
 
     <section class="card" id="storeCard" hidden>
-      <div><h2>Already in the store</h2><p class="step-sub">Press Update to release a new version of one of these.</p></div>
+      <div><h2>Already in the store</h2><p class="step-sub">Press Update on a mod to release a new version of it.</p></div>
+      <div class="notice good" id="storeMsg" hidden></div>
       <input id="filter" type="search" placeholder="Search mods" aria-label="Search mods">
       <ul id="mods" class="mods"></ul>
     </section>
@@ -537,22 +550,84 @@ function renderMods() {
     return;
   }
   for (const m of list) {
-    const li = document.createElement("li"), info = document.createElement("div");
-    info.innerHTML = `<div class="mname"></div><small></small>`;
-    info.firstChild.textContent = m.name;
-    info.lastChild.textContent = `v${m.version} by ${m.creator}`;
-    const btn = document.createElement("button");
-    btn.className = "btn btn-ghost"; btn.type = "button"; btn.textContent = "Update";
+    const li = document.createElement("li");
+    li.innerHTML = `<div class="mrow"><div><div class="mname"></div><small></small></div>
+      <button class="btn btn-ghost" type="button" aria-expanded="false">Update <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button></div>
+      <div class="upd"><div><div class="upd-inner"></div></div></div>`;
+    li.querySelector(".mname").textContent = m.name;
+    li.querySelector("small").textContent = `v${m.version} by ${m.creator}`;
+    const btn = li.querySelector(".mrow .btn");
     btn.onclick = () => {
-      $("successBody").hidden = true; $("formBody").hidden = false;
-      $("name").value = m.name; $("creator").value = m.creator; $("version").value = bump(m.version);
-      $("tags").value = (m.tags || []).join(", "); $("summary").value = m.summary || "";
-      $("about").value = m.description && m.description !== m.summary ? m.description : "";
-      setStep(packed ? 3 : 2); update();
-      $("step2").scrollIntoView({ behavior: "smooth", block: "start" });
+      const open = !li.classList.contains("open");
+      for (const other of ul.querySelectorAll("li.open")) { other.classList.remove("open"); other.querySelector(".mrow .btn").setAttribute("aria-expanded", "false"); }
+      if (open) { if (!li.querySelector(".upd-inner").childElementCount) buildUpdate(li.querySelector(".upd-inner"), m); li.classList.add("open"); }
+      btn.setAttribute("aria-expanded", String(open));
     };
-    li.append(info, btn); ul.append(li);
+    ul.append(li);
   }
+}
+
+// The dropdown under a store mod: drop the new zip, adjust the details, release.
+function buildUpdate(box, m) {
+  box.innerHTML = `
+    <div class="drop" role="button" tabindex="0"><strong>Drop the new .zip here</strong>or click to pick it</div>
+    <div class="file-ok" hidden><div class="meta"><div class="fname"></div><div class="fsub"></div></div><button class="btn btn-ghost" type="button" data-k="change">Change</button></div>
+    <input type="file" accept=".zip,application/zip" hidden>
+    <div class="grid2">
+      <div><label>New version</label><input data-f="version"><p class="field-hint"></p></div>
+      <div><label>Made by</label><input data-f="creator" maxlength="80"></div>
+    </div>
+    <div><label>Short description</label><input data-f="summary" maxlength="300"></div>
+    <div><label>About</label><textarea data-f="about" maxlength="5000" placeholder="Optional"></textarea></div>
+    <div class="notice err" hidden></div>
+    <div class="actions"><button class="btn btn-primary" type="button" data-k="go" disabled>Release update</button><span class="hint" data-k="why">Add the new zip first.</span></div>`;
+  const q = sel => box.querySelector(sel), f = k => q(`[data-f="${k}"]`);
+  q(".field-hint").textContent = `Currently v${m.version}.`;
+  f("version").value = bump(m.version); f("creator").value = m.creator; f("summary").value = m.summary || "";
+  f("about").value = m.description && m.description !== m.summary ? m.description : "";
+  let zip = null;
+  const err = msg => { q(".notice").textContent = msg || ""; q(".notice").hidden = !msg; };
+  const check = () => {
+    const why = !zip ? "Add the new zip first." : !f("version").value.trim() ? "Enter a version." : f("version").value.trim() === m.version ? "Raise the version so players see the update." : "";
+    q('[data-k="go"]').disabled = !!why; q('[data-k="why"]').textContent = why;
+  };
+  const pick = async file => {
+    if (!file) return;
+    err();
+    if (!/\.zip$/i.test(file.name)) return err(`"${file.name}" isn't a .zip.`);
+    q(".drop strong").textContent = "Checking...";
+    try {
+      zip = await repack(file);
+      q(".fname").textContent = file.name;
+      q(".fsub").textContent = `Looks good: ${zip.patches.join(", ")}, ${size(zip.bytes.length)}.`;
+      q(".drop").hidden = true; q(".file-ok").hidden = false;
+    } catch (e) { zip = null; err(e.message); }
+    finally { q(".drop strong").textContent = "Drop the new .zip here"; check(); }
+  };
+  const input = q('input[type="file"]');
+  q(".drop").onclick = q('[data-k="change"]').onclick = () => input.click();
+  q(".drop").onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); } };
+  input.onchange = () => pick(input.files[0]);
+  q(".drop").ondragover = e => { e.preventDefault(); e.stopPropagation(); q(".drop").classList.add("over"); };
+  q(".drop").ondragleave = () => q(".drop").classList.remove("over");
+  q(".drop").ondrop = e => { e.preventDefault(); e.stopPropagation(); q(".drop").classList.remove("over"); pick(e.dataTransfer.files[0]); };
+  for (const k of ["version", "creator"]) f(k).oninput = check;
+  q('[data-k="go"]').onclick = async () => {
+    const go = q('[data-k="go"]');
+    err(); go.disabled = true; go.textContent = "Releasing...";
+    try {
+      const res = await api("/upload", {
+        name: m.name, creator: f("creator").value.trim() || m.creator, version: f("version").value.trim(),
+        tags: (m.tags || []).join(", "), summary: f("summary").value, about: f("about").value,
+        file: new File([zip.bytes], "mod.zip", { type: "application/zip" }),
+      });
+      mods = res.mods; renderMods();
+      $("storeMsg").textContent = `Updated ${m.name} to v${res.entry.version}. It goes live in a few minutes.`;
+      $("storeMsg").hidden = false;
+    } catch (e) {
+      err(e.message); go.textContent = "Release update"; check();
+    }
+  };
 }
 
 // ---------- Wiring ----------
