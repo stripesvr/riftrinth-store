@@ -1,0 +1,11 @@
+{
+  "name": "Cosmetic",
+  "creator": "Yako",
+  "version": "1.0.0",
+  "tags": "Fun",
+  "summary": "every cosmetic",
+  "about": "",
+  "bytes": 105101,
+  "patches": "A2-Android_ASTC_UnlockAllCosmetics_P.pak, A2-Android_ASTC_UnlockAllCosmetics_P.ucas, A2-Android_ASTC_UnlockAllCosmetics_P.utoc",
+  "submitted": "2026-11-05T22:45:57Z"
+}
