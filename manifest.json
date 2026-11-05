@@ -1,6 +1,6 @@
 {
   "name": "Stripes Mod Store",
-  "updated": "2026-11-05T00:50:53Z",
+  "updated": "2026-11-05T00:51:37Z",
   "mods": [
     {
       "id": "Driftrinth-Client",
@@ -37,6 +37,26 @@
           "url": "mods/cosmeticz/cosmeticz.zip",
           "bytes": 105101,
           "sha256": "1456313466c295ef86b1ea0e3913a4842cd65151efbd346c3e26ab4aeab59556"
+        }
+      ]
+    },
+    {
+      "id": "every-ending-v1-6",
+      "name": "Every Ending V1.6",
+      "creator": "onslaughtghosty",
+      "version": "1.6",
+      "summary": "Pretty good mod menu",
+      "description": "Has rainbow color and way more",
+      "tags": [
+        "fun"
+      ],
+      "updated": "2026-11-05T00:51:37Z",
+      "files": [
+        {
+          "name": "every-ending-v1-6.zip",
+          "url": "mods/every-ending-v1-6/every-ending-v1-6.zip",
+          "bytes": 481119,
+          "sha256": "5e7a833e5dec4236320c2dd9820e67e86faaee4964cb1ddec091945ce7dd0db0"
         }
       ]
     }
