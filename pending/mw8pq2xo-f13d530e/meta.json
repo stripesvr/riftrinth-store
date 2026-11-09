@@ -1,0 +1,11 @@
+{
+  "name": "MeiMei Client",
+  "creator": "Meimei",
+  "version": "1.0.0",
+  "tags": "",
+  "summary": "",
+  "about": "",
+  "bytes": 501108,
+  "patches": "A2-Android_ASTC_MeiMeiClient_P.pak, A2-Android_ASTC_MeiMeiClient_P.ucas, A2-Android_ASTC_MeiMeiClient_P.utoc",
+  "submitted": "2026-11-09T03:39:41Z"
+}
